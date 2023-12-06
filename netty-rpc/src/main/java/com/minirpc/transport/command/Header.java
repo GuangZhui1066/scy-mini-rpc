@@ -28,7 +28,7 @@ public class Header {
     }
 
     /**
-     * 编码后的长度，即字节数
+     * 编码后的长度，即字节数 (Java 中 int 类型占四个字节)
      *   type + version + requestId
      */
     public int encodedLength() {
