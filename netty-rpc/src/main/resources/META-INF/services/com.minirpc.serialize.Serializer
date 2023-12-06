@@ -1,0 +1,3 @@
+com.minirpc.serialize.impl.StringSerializer
+com.minirpc.serialize.impl.RpcRequestSerializer
+com.minirpc.serialize.impl.MetadataSerializer

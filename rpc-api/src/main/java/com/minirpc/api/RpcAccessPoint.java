@@ -9,7 +9,7 @@ import java.net.URI;
 public interface RpcAccessPoint extends Closeable {
 
     /**
-     * 服务端调用，注册服务的实现实例
+     * 供 provider 调用，注册服务的实现实例
      *
      * @param service 实现实例
      * @param serviceClass 服务的接口类的Class
@@ -19,7 +19,7 @@ public interface RpcAccessPoint extends Closeable {
     <T> URI addServiceProvider(T service, Class<T> serviceClass);
 
     /**
-     * 客户端调用，获取远程服务的引用
+     * 供 consumer 调用，获取远程服务的引用
      *
      * @param uri 远程服务地址
      * @param serviceClass 服务的接口类的Class
@@ -34,5 +34,17 @@ public interface RpcAccessPoint extends Closeable {
      * @return 服务实例
      */
     Closeable startServer() throws Exception;
+
+    /**
+     * 获取注册中心
+     * @param nameServiceUri 注册中心URI
+     * @return 注册中心引用
+     */
+    NameService getNameService(URI nameServiceUri);
+
+    /**
+     * 关闭注册中心
+     */
+    void closeNameService();
 
 }

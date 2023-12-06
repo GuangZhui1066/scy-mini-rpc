@@ -1,12 +1,19 @@
 package com.minirpc.api;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 
 /**
  * 注册中心
  */
-public interface NameService {
+public interface NameService extends Closeable {
+
+    /**
+     * 连接注册中心
+     * @param nameServiceUri 注册中心地址
+     */
+    void connect(URI nameServiceUri);
 
     /**
      * 注册服务

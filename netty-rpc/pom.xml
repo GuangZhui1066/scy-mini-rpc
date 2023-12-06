@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>provider</artifactId>
+    <artifactId>netty-rpc</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -19,17 +19,17 @@
     <dependencies>
         <dependency>
             <groupId>org.example</groupId>
-            <artifactId>service-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
             <artifactId>rpc-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.example</groupId>
-            <artifactId>netty-rpc</artifactId>
-        </dependency>
 
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-all</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
