@@ -23,8 +23,14 @@ public abstract class CommandEncoder extends MessageToByteEncoder {
 
         Command command = (Command) o;
         int commandLength = Integer.BYTES + command.getHeader().encodedLength() + command.getPayload().length;
+
+        // 总字节数
         byteBuf.writeInt(commandLength);
+
+        // 请求头/响应头
         encodeHeader(channelHandlerContext, command.getHeader(), byteBuf);
+
+        // 请求体
         byteBuf.writeBytes(command.getPayload());
     }
 
@@ -33,9 +39,10 @@ public abstract class CommandEncoder extends MessageToByteEncoder {
      */
     protected abstract void encodeHeader(ChannelHandlerContext channelHandlerContext, Header header, ByteBuf byteBuf) throws Exception;
 
-    protected void encodeRequestHeader(ChannelHandlerContext channelHandlerContext, Header header, ByteBuf byteBuf) throws Exception {
+    protected void encodeBaseHeader(ChannelHandlerContext channelHandlerContext, Header header, ByteBuf byteBuf) throws Exception {
         byteBuf.writeInt(header.getType());
         byteBuf.writeInt(header.getVersion());
         byteBuf.writeInt(header.getRequestId());
     }
+
 }

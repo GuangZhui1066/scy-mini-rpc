@@ -23,7 +23,7 @@ public class ResponseInvocation extends SimpleChannelInboundHandler<Command> {
 
 
     /**
-     * 处理接收到的 I/O 事件
+     * Consumer 端处理接收到的 I/O 事件 (即收到 RPC 的返回响应)
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Command response) {

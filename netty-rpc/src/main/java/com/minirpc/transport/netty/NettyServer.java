@@ -2,9 +2,9 @@ package com.minirpc.transport.netty;
 
 import com.minirpc.server.RequestHandlerRegistry;
 import com.minirpc.transport.TransportServer;
+import com.minirpc.transport.netty.handler.RequestInvocation;
 import com.minirpc.transport.netty.handler.coder.decode.RequestDecoder;
 import com.minirpc.transport.netty.handler.coder.encode.ResponseEncoder;
-import com.minirpc.transport.netty.handler.RequestInvocation;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -71,13 +71,17 @@ public class NettyServer implements TransportServer {
         }
     }
 
+    /**
+     * Provider 端的 I/O 事件处理器
+     */
     private ChannelHandler newChannelHandlerPipeline() {
         return new ChannelInitializer<Channel>() {
             @Override
             protected void initChannel(Channel channel) {
                 channel.pipeline()
-                    // 解码 RPC 请求
+                    // 解码 RPC 请求的 Command
                     .addLast(new RequestDecoder())
+                    // 编码 RPC 返回的 Command
                     .addLast(new ResponseEncoder())
                     // 处理 RPC 请求
                     .addLast(new RequestInvocation(requestHandlerRegistry));

@@ -8,9 +8,9 @@ import java.util.concurrent.TimeoutException;
 import com.minirpc.transport.InFlightRequests;
 import com.minirpc.transport.Transport;
 import com.minirpc.transport.TransportFactory;
-import com.minirpc.transport.netty.handler.coder.encode.RequestEncoder;
-import com.minirpc.transport.netty.handler.coder.decode.ResponseDecoder;
 import com.minirpc.transport.netty.handler.ResponseInvocation;
+import com.minirpc.transport.netty.handler.coder.decode.ResponseDecoder;
+import com.minirpc.transport.netty.handler.coder.encode.RequestEncoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.Channel;
@@ -63,13 +63,12 @@ public class NettyTransportFactory implements TransportFactory {
             ChannelHandler channelHandlerPipeline = newChannelHandlerPipeline();
             bootstrap = newBootstrap(channelHandlerPipeline, ioEventGroup);
         }
-        ChannelFuture channelFuture;
-        Channel channel;
-        channelFuture = bootstrap.connect(address);
+
+        ChannelFuture channelFuture = bootstrap.connect(address);
         if (!channelFuture.await(connectionTimeout)) {
             throw new TimeoutException();
         }
-        channel = channelFuture.channel();
+        Channel channel = channelFuture.channel();
         if (channel == null || !channel.isActive()) {
             throw new IllegalStateException();
         }
@@ -86,15 +85,16 @@ public class NettyTransportFactory implements TransportFactory {
     }
 
     /**
-     * I/O 事件处理器
+     * Consumer 端的 I/O 事件处理器
      */
     private ChannelHandler newChannelHandlerPipeline() {
         return new ChannelInitializer<Channel>() {
             @Override
             protected void initChannel(Channel channel) {
                 channel.pipeline()
-                    // 解码 RPC 返回值
+                    // 解码 RPC 返回的 Command
                     .addLast(new ResponseDecoder())
+                    // 编码 RPC 请求的 Command
                     .addLast(new RequestEncoder())
                     // 处理收到响应的 RPC 请求
                     .addLast(new ResponseInvocation(inFlightRequests));

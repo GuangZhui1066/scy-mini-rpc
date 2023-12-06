@@ -9,18 +9,18 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
- * 编码 RPC 返回的 Command 对象
+ * 编码 RPC 请求返回的 Command 对象
  */
 public class ResponseEncoder extends CommandEncoder {
 
     @Override
     protected void encodeHeader(ChannelHandlerContext channelHandlerContext, Header header, ByteBuf byteBuf) throws Exception {
-        super.encodeRequestHeader(channelHandlerContext, header, byteBuf);
+        super.encodeBaseHeader(channelHandlerContext, header, byteBuf);
 
         if (header instanceof ResponseHeader) {
             ResponseHeader responseHeader = (ResponseHeader) header;
             byteBuf.writeInt(responseHeader.getCode());
-            int errorLength = header.encodedLength() - ResponseHeader.fixedLength();
+            int errorLength = responseHeader.getErrMsgLength();
             byteBuf.writeInt(errorLength);
             byteBuf.writeBytes(responseHeader.getErrMsg() == null ?
                 new byte[0] :

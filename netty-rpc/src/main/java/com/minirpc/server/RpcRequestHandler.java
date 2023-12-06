@@ -43,8 +43,10 @@ public class RpcRequestHandler implements RequestHandler, ServiceProviderRegistr
             String arg = SerializeSupport.parse(rpcRequest.getSerializedArguments());
             Method method = serviceProvider.getClass().getMethod(rpcRequest.getMethodName(), String.class);
             String result = (String) method.invoke(serviceProvider, arg);
-            // 封装结果返回
-            return new Command(new ResponseHeader(type(), header.getVersion(), header.getRequestId()), SerializeSupport.serialize(result));
+            // 将结果序列化，封装成 Command 返回
+            ResponseHeader responseHeader = new ResponseHeader(type(), header.getVersion(), header.getRequestId());
+            byte [] payload = SerializeSupport.serialize(result);
+            return new Command(responseHeader, payload);
 
         } catch (Throwable t) {
             System.out.println("handle request Exception: " + t.getMessage());

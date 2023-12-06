@@ -12,7 +12,7 @@ public class RequestEncoder extends CommandEncoder {
 
     @Override
     protected void encodeHeader(ChannelHandlerContext channelHandlerContext, Header header, ByteBuf byteBuf) throws Exception {
-        super.encodeRequestHeader(channelHandlerContext, header, byteBuf);
+        super.encodeBaseHeader(channelHandlerContext, header, byteBuf);
     }
 
 }

@@ -12,7 +12,7 @@ public class ResponseHeader extends Header {
 
 
     public ResponseHeader(int type, int version, int requestId) {
-        this(type, version, requestId, ResultCode.SUCCESS.getCode(), null);
+        this(type, version, requestId, ResultCode.SUCCESS.getCode(), ResultCode.SUCCESS.getMessage());
     }
 
     public ResponseHeader(int type, int version, int requestId, int code, String errMsg) {
@@ -21,21 +21,24 @@ public class ResponseHeader extends Header {
         this.errMsg = errMsg;
     }
 
-
-    /**
-     * 固定部分 (type + version + requestId + code) 序列化后的长度，即字节数
-     */
-    public static int fixedLength() {
-        return Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES;
-    }
-
     /**
      * 编码后的长度，即字节数
-     * 固定部分 + errMsg长度 + errMsg
+     *   固定部分 + errMsg
      */
     @Override
     public int encodedLength() {
-        return fixedLength() + (errMsg == null ? 0 : errMsg.getBytes(StandardCharsets.UTF_8).length);
+        return
+            // type + version + requestId + code + errMsg长度
+            Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES + Integer.BYTES +
+            // errMsg 字段的长度
+            getErrMsgLength();
+    }
+
+    /**
+     * errMsg 字段编码后的长度，即字节数
+     */
+    public int getErrMsgLength() {
+        return errMsg == null ? 0 : errMsg.getBytes(StandardCharsets.UTF_8).length;
     }
 
 

@@ -9,7 +9,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
- * 解码 RPC 返回的 Command 对象
+ * 解码 RPC 请求返回的 Command 对象
  */
 public class ResponseDecoder extends CommandDecoder {
 

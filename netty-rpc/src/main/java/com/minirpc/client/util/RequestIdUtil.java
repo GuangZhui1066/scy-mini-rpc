@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class RequestIdUtil {
 
-    private static final AtomicInteger NEXT_REQUEST_ID = new AtomicInteger(1001);
+    private static final AtomicInteger NEXT_REQUEST_ID = new AtomicInteger(101);
 
     public static int next() {
         return NEXT_REQUEST_ID.getAndIncrement();

@@ -24,7 +24,7 @@ public class RequestInvocation extends SimpleChannelInboundHandler<Command> {
 
 
     /**
-     * 处理接收到的 I/O 事件
+     * Provider 端处理接收到的 I/O 事件 (即收到 RPC 的请求)
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Command request) throws Exception {

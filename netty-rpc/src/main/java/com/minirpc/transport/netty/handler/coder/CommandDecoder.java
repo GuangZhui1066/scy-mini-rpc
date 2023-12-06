@@ -22,8 +22,8 @@ public abstract class CommandDecoder extends ByteToMessageDecoder {
             return;
         }
         byteBuf.markReaderIndex();
-        int length = byteBuf.readInt() - LENGTH_FIELD_LENGTH;
 
+        int length = byteBuf.readInt() - LENGTH_FIELD_LENGTH;
         if (byteBuf.readableBytes() < length) {
             byteBuf.resetReaderIndex();
             return;
@@ -33,6 +33,7 @@ public abstract class CommandDecoder extends ByteToMessageDecoder {
         int payloadLength  = length - header.encodedLength();
         byte [] payload = new byte[payloadLength];
         byteBuf.readBytes(payload);
+
         list.add(new Command(header, payload));
     }
 

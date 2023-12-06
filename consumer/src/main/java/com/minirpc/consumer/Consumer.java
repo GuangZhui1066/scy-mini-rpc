@@ -73,9 +73,9 @@ public class Consumer {
         // 通过注册中心查找服务提供者的地址
         URI uri = nameService.lookupService(serviceName);
         if (uri == null) {
-            throw new RuntimeException("RPCConsumer 未找到服务提供者! service: " + serviceName);
+            throw new RuntimeException("Consumer. 未找到服务提供者! service: " + serviceName);
         }
-        logger.info("RPCConsumer 找到服务提供者, service:{}, provider:{}", serviceName, uri);
+        logger.info("Consumer. 找到服务提供者, service:{}, provider:{}", serviceName, uri);
 
         // 创建 RPC 服务在 Consumer 端的代理对象
         return rpcAccessPoint.getRemoteService(uri, serviceClass);

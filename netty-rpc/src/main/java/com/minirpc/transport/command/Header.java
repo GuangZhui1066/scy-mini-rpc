@@ -27,20 +27,12 @@ public class Header {
         this.requestId = requestId;
     }
 
-
     /**
-     * 固定部分 (type + version + requestId) 序列化后的长度，即字节数
-     * todo：type, version 等字段虽然是 int 类型，但是值不能超过 127，否则会超过一个字节
-     */
-    public static int fixedLength() {
-        return Integer.BYTES + Integer.BYTES + Integer.BYTES;
-    }
-
-    /**
-     * 序列化后的长度，即字节数
+     * 编码后的长度，即字节数
+     *   type + version + requestId
      */
     public int encodedLength() {
-        return fixedLength();
+        return Integer.BYTES + Integer.BYTES + Integer.BYTES;
     }
 
 
