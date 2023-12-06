@@ -34,7 +34,7 @@ public class RequestInvocation extends SimpleChannelInboundHandler<Command> {
             if (null != response) {
                 channelHandlerContext.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> {
                     if (!channelFuture.isSuccess()) {
-                        System.out.println("Write response failed! " + channelFuture.cause());
+                        System.out.println("Producer. write response failed! " + channelFuture.cause());
                         channelHandlerContext.channel().close();
                     }
                 });

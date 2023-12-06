@@ -73,6 +73,7 @@ public class NettyServer implements TransportServer {
 
     /**
      * Provider 端的 I/O 事件处理器
+     * todo pipeline中处理器的执行顺序
      */
     private ChannelHandler newChannelHandlerPipeline() {
         return new ChannelInitializer<Channel>() {
