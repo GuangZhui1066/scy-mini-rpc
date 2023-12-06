@@ -2,12 +2,12 @@ package com.minirpc.serialize;
 
 /**
  * 序列化器接口
+ *   特定类型的对象  <<<=== 序列化/反序列化 ===>>>  字符数组
  *
  * 有三个实现类，每个实现类实现一种数据的序列化：
  *   StringSerializer，用于序列化 String 类型的数据
  *   MetadataSerializer，用于序列化注册中心元数据 Metadata 类型
  *   RpcRequestSerializer，用于序列化RPC请求 RpcRequest 类型
- * todo 阅读三种序列化的实现
  */
 public interface Serializer<T> {
 

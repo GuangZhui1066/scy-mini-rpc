@@ -28,7 +28,9 @@ public class MetadataSerializer implements Serializer<Metadata> {
                Short.BYTES + e.getValue().stream().mapToInt(uri -> Short.BYTES + uri.toASCIIString().getBytes(StandardCharsets.UTF_8).length).sum();
     }
 
-
+    /**
+     * 使用 java nio 包下的 ByteBuffer 类，用于操作字节数据
+     */
     @Override
     public void serialize(Metadata entry, byte[] bytes, int offset, int length) {
         ByteBuffer buffer = ByteBuffer.wrap(bytes, offset, length);
