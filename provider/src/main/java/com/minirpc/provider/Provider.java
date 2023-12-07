@@ -43,6 +43,9 @@ public class Provider {
         File nameServiceDataFile = new File(currentDir, "name_service.data");
 
         rpcAccessPoint = ServiceSupport.load(RpcAccessPoint.class);
+
+        // 支持 LocalFileNameService 和 MySQLNameService
+        // 可以在 SPI 配置文件 (com.minirpc.api.NameService) 中灵活配置
         nameService = rpcAccessPoint.getNameService(nameServiceDataFile.toURI());
         assert nameService != null;
 

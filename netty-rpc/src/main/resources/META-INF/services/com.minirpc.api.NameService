@@ -1,1 +1,1 @@
-com.minirpc.nameservice.LocalFileNameService
+com.minirpc.nameservice.MySQLNameService
