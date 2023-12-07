@@ -1,9 +1,15 @@
 package com.minirpc.transport.netty.handler;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.minirpc.server.RequestHandler;
 import com.minirpc.server.RequestHandlerRegistry;
 import com.minirpc.transport.command.Command;
+import com.minirpc.transport.command.ResponseHeader;
+import com.minirpc.transport.command.ResultCode;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -18,6 +24,12 @@ public class RequestInvocation extends SimpleChannelInboundHandler<Command> {
 
     private final RequestHandlerRegistry requestHandlerRegistry;
 
+    /**
+     * 用于处理请求的线程池
+     */
+    private final ExecutorService executorService = Executors.newFixedThreadPool(5);
+
+
     public RequestInvocation(RequestHandlerRegistry requestHandlerRegistry) {
         this.requestHandlerRegistry = requestHandlerRegistry;
     }
@@ -25,28 +37,48 @@ public class RequestInvocation extends SimpleChannelInboundHandler<Command> {
 
     /**
      * Provider 端处理接收到的 I/O 事件 (即收到 RPC 的请求)
-     * todo 改为异步处理，避免provider处理请求时阻塞
      */
     @Override
-    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Command request) throws Exception {
-        RequestHandler handler = requestHandlerRegistry.get(request.getHeader().getType());
-        if (null != handler) {
-            // 用对应的请求处理器处理 RPC 请求
-            Command response = handler.handle(request);
-            if (null != response) {
-                // 把请求的处理结果发送给 Consumer
-                channelHandlerContext.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> {
-                    if (!channelFuture.isSuccess()) {
-                        System.out.println("Producer. write response failed! " + channelFuture.cause());
-                        channelHandlerContext.channel().close();
-                    }
-                });
-            } else {
-                logger.warn("RequestInvocation. Response is null!");
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, Command requestCommand) throws Exception {
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                RequestHandler handler = requestHandlerRegistry.get(requestCommand.getHeader().getType());
+                Command responseCommand;
+                if (handler != null) {
+                    // 找到对应的请求处理器，用对应的请求处理器处理 RPC 请求
+                    responseCommand = handler.handle(requestCommand);
+                } else {
+                    // 没有对应的请求处理器，返回无法处理的错误
+                    responseCommand = new Command(
+                        new ResponseHeader(
+                            requestCommand.getHeader().getType(),
+                            requestCommand.getHeader().getVersion(),
+                            requestCommand.getHeader().getRequestId(),
+                            ResultCode.CANNOT_HANDLE.getCode(),
+                            "No handler for request with type: " + requestCommand.getHeader().getType()
+                        ),
+                        new byte[0]
+                    );
+                }
+
+                if (null != responseCommand) {
+                    // 把请求的处理结果发送给 Consumer
+                    channelHandlerContext.writeAndFlush(responseCommand).addListener(new ChannelFutureListener() {
+                        @Override
+                        public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                            // I/O 数据发送失败
+                            if (!channelFuture.isSuccess()) {
+                                System.out.println("Producer. write response failed! " + channelFuture.cause());
+                                channelHandlerContext.channel().close();
+                            }
+                        }
+                    });
+                } else {
+                    logger.warn("RequestInvocation. Response is null!");
+                }
             }
-        } else {
-            throw new Exception(String.format("No handler for request with type: %d!", request.getHeader().getType()));
-        }
+        });
     }
 
     @Override

@@ -69,6 +69,11 @@ public class Consumer {
             //    第一个请求在发出后 2s 后返回
             //    第二个请求在发出后 4s 后返回
             //    第三个请求在发出后 6s 后返回
+            //
+            // 在 Provider 端异步处理(线程池)的情况下，并发的三个请求就会在 Provider 端被同时处理。
+            // 假设每次处理需要2s时间，那么:
+            //    在同时发出三个请求的 2s 后，三个请求都会同时返回
+
             ExecutorService executorService = Executors.newFixedThreadPool(3);
 
             executorService.execute(new Runnable() {
