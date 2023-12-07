@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class InFlightRequests implements Closeable {
 
-    private final static long TIMEOUT_SEC = 3L;
+    private final static long TIMEOUT_SEC = 10L;
 
     /**
      * 信号量，控制并发访问的数量。

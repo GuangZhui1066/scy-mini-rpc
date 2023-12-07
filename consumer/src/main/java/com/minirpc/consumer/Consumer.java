@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.minirpc.api.NameService;
 import com.minirpc.api.RpcAccessPoint;
@@ -60,17 +62,44 @@ public class Consumer {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-            logger.info("RPCConsumer 发出请求1, 时间:{}", sdf.format(new Date()));
-            String rpcResult1 = helloService.hello("scy1");
-            logger.info("RPCConsumer 收到请求1的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult1);
+            // 模拟并发请求
+            //
+            // 在 Provider 端同步处理的情况下，并发的三个请求就会在 Provider 端排队，被依次处理。
+            // 假设每次处理需要2s时间，那么:
+            //    第一个请求在发出后 2s 后返回
+            //    第二个请求在发出后 4s 后返回
+            //    第三个请求在发出后 6s 后返回
+            ExecutorService executorService = Executors.newFixedThreadPool(3);
 
-            logger.info("RPCConsumer 发出请求2, 时间:{}", sdf.format(new Date()));
-            String rpcResult2 = helloService.hello("scy2");
-            logger.info("RPCConsumer 收到请求2的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult2);
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    logger.info("RPCConsumer 发出请求1, 时间:{}", sdf.format(new Date()));
+                    String rpcResult1 = helloService.hello("scy1");
+                    logger.info("RPCConsumer 收到请求1的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult1);
+                }
+            });
 
-            logger.info("RPCConsumer 发出请求3, 时间:{}", sdf.format(new Date()));
-            String rpcResult3 = helloService.hello("scy3");
-            logger.info("RPCConsumer 收到请求3的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult3);
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    logger.info("RPCConsumer 发出请求2, 时间:{}", sdf.format(new Date()));
+                    String rpcResult2 = helloService.hello("scy2");
+                    logger.info("RPCConsumer 收到请求2的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult2);
+                }
+            });
+
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    logger.info("RPCConsumer 发出请求3, 时间:{}", sdf.format(new Date()));
+                    String rpcResult3 = helloService.hello("scy3");
+                    logger.info("RPCConsumer 收到请求3的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult3);
+                }
+            });
+
+            executorService.shutdown();
+
         } catch (Exception e) {
             logger.error("RPCConsumer 请求异常", e);
         }

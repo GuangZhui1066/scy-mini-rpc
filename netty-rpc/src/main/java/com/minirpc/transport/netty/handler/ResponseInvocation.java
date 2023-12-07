@@ -34,7 +34,8 @@ public class ResponseInvocation extends SimpleChannelInboundHandler<Command> {
             // 将 responseFuture 状态设置为完成，将响应中的返回值付赋给 responseFuture
             responseFuture.getFuture().complete(response);
         } else {
-            logger.warn("Drop response: {}", response);
+            // 已经因返回超时被 inFlightRequests 定期清除
+            logger.warn("请求超时！Request timeout, response dropped.");
         }
     }
 
