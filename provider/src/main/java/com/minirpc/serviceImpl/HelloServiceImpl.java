@@ -14,6 +14,11 @@ public class HelloServiceImpl implements HelloService {
         //    Thread.sleep(5 * 1000);
         //} catch (Exception ignored) {}
 
+        // 测试异步处理请求
+        try {
+            Thread.sleep(2 * 1000);
+        } catch (Exception ignored) {}
+
         return "...Hello, " + name + " !...";
     }
 

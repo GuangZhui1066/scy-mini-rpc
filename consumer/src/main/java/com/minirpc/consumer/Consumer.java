@@ -3,6 +3,8 @@ package com.minirpc.consumer;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import com.minirpc.api.NameService;
 import com.minirpc.api.RpcAccessPoint;
@@ -56,8 +58,19 @@ public class Consumer {
 
         // 调用 RPC 服务
         try {
-            String rpcResult = helloService.hello("scy");
-            logger.info("RPCConsumer 收到请求响应, rpcResult: " + rpcResult);
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+            logger.info("RPCConsumer 发出请求1, 时间:{}", sdf.format(new Date()));
+            String rpcResult1 = helloService.hello("scy1");
+            logger.info("RPCConsumer 收到请求1的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult1);
+
+            logger.info("RPCConsumer 发出请求2, 时间:{}", sdf.format(new Date()));
+            String rpcResult2 = helloService.hello("scy2");
+            logger.info("RPCConsumer 收到请求2的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult2);
+
+            logger.info("RPCConsumer 发出请求3, 时间:{}", sdf.format(new Date()));
+            String rpcResult3 = helloService.hello("scy3");
+            logger.info("RPCConsumer 收到请求3的响应, 时间:{}, 返回值:{}", sdf.format(new Date()), rpcResult3);
         } catch (Exception e) {
             logger.error("RPCConsumer 请求异常", e);
         }
