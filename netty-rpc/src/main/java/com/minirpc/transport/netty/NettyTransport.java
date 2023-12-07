@@ -32,6 +32,10 @@ public class NettyTransport implements Transport {
     }
 
 
+    /**
+     * 异步发送请求
+     *   把请求数据发送出去后会立即返回，不会阻塞进程去等待响应
+     */
     @Override
     public CompletableFuture<Command> send(Command request) {
         // 构建请求返回值
@@ -40,12 +44,12 @@ public class NettyTransport implements Transport {
             // 将在途请求放到 inFlightRequests 中
             inFlightRequests.put(new ResponseFuture(request.getHeader().getRequestId(), responseFuture));
             // 用 netty 发送请求数据
-            channel
-                .writeAndFlush(request)
+            channel.writeAndFlush(request)
                 .addListener(new ChannelFutureListener() {
                     // 当 I/O 结束后回调
                     @Override
                     public void operationComplete(ChannelFuture channelFuture) throws Exception {
+                        // 发送失败，结束 responseFuture
                         if (!channelFuture.isSuccess()) {
                             responseFuture.completeExceptionally(channelFuture.cause());
                             channel.close();
@@ -53,7 +57,7 @@ public class NettyTransport implements Transport {
                     }
                 });
         } catch (Throwable e) {
-            // 发送异常
+            // 发送异常，结束 responseFuture
             inFlightRequests.remove(request.getHeader().getRequestId());
             responseFuture.completeExceptionally(e);
         }

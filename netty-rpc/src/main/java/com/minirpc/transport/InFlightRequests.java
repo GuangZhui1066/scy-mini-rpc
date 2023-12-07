@@ -53,7 +53,7 @@ public class InFlightRequests implements Closeable {
                 semaphore.release();
                 return true;
             } else {
-            return false;
+                return false;
             }
         });
     }

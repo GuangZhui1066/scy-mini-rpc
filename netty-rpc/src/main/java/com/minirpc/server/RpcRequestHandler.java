@@ -26,13 +26,16 @@ public class RpcRequestHandler implements RequestHandler, ServiceProviderRegistr
     private Map<String, Object> serviceProviders = new HashMap<>();
 
 
+    /**
+     * Provider 端的核心逻辑
+     */
     @Override
     public Command handle(Command requestCommand) {
         Header header = requestCommand.getHeader();
         // 反序列化 RpcRequest
         RpcRequest rpcRequest = SerializeSupport.parse(requestCommand.getPayload());
         try {
-            // 查找已注册的 provider，寻找 rpcRequest 中需要的服务
+            // 查找已注册的 provider (服务实现类) 实例，寻找 rpcRequest 中需要的服务
             Object serviceProvider = serviceProviders.get(rpcRequest.getInterfaceName());
             if (serviceProvider == null) {
                 // 没找到 provider

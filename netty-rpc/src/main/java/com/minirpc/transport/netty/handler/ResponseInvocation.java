@@ -24,13 +24,15 @@ public class ResponseInvocation extends SimpleChannelInboundHandler<Command> {
 
     /**
      * Consumer 端处理接收到的 I/O 事件 (即收到 RPC 的返回响应)
+     *   Consumer 在这里异步接收 Provider 的响应，收到响应后结束掉 responseFuture
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Command response) {
-        ResponseFuture future = inFlightRequests.remove(response.getHeader().getRequestId());
-        if(null != future) {
-            // 将 Future 状态设置为完成
-            future.getFuture().complete(response);
+        // 收到响应后，从在途请求中移除
+        ResponseFuture responseFuture = inFlightRequests.remove(response.getHeader().getRequestId());
+        if (null != responseFuture) {
+            // 将 responseFuture 状态设置为完成，将响应中的返回值付赋给 responseFuture
+            responseFuture.getFuture().complete(response);
         } else {
             logger.warn("Drop response: {}", response);
         }

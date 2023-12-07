@@ -25,13 +25,16 @@ public class RequestInvocation extends SimpleChannelInboundHandler<Command> {
 
     /**
      * Provider 端处理接收到的 I/O 事件 (即收到 RPC 的请求)
+     * todo 改为异步处理，避免provider处理请求时阻塞
      */
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Command request) throws Exception {
         RequestHandler handler = requestHandlerRegistry.get(request.getHeader().getType());
         if (null != handler) {
+            // 用对应的请求处理器处理 RPC 请求
             Command response = handler.handle(request);
             if (null != response) {
+                // 把请求的处理结果发送给 Consumer
                 channelHandlerContext.writeAndFlush(response).addListener((ChannelFutureListener) channelFuture -> {
                     if (!channelFuture.isSuccess()) {
                         System.out.println("Producer. write response failed! " + channelFuture.cause());

@@ -58,7 +58,7 @@ public class NettyRpcAccessPoint implements RpcAccessPoint {
     public <T> T getRemoteService(URI uri, Class<T> serviceClass) {
         // 获取或创建这个 URI 对应的连接对象，保存
         Transport transport = transportMap.computeIfAbsent(uri, this::createTransport);
-        // 动态生成桩
+        // 在运行时动态地生成桩
         T serviceStub = stubFactory.createStub(transport, serviceClass);
         return serviceStub;
     }

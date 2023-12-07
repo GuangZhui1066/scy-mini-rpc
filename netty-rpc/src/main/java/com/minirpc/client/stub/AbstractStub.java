@@ -1,5 +1,6 @@
 package com.minirpc.client.stub;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 import com.minirpc.client.util.RequestIdUtil;
@@ -34,8 +35,10 @@ public class AbstractStub implements ServiceStub {
         // 构建完整的网络请求：请求头 + 请求体
         Command requestCommand = new Command(header, payload);
         try {
-            // 通过 Transport 发送网络请求，并获取响应
-            Command responseCommand = transport.send(requestCommand).get();
+            // 通过 Transport 异步发送网络请求 (发送之后立即返回，不会阻塞等待)
+            CompletableFuture<Command> responseFuture = transport.send(requestCommand);
+            // 等待请求返回
+            Command responseCommand = responseFuture.get();
             ResponseHeader responseHeader = (ResponseHeader) responseCommand.getHeader();
             if (ResultCode.SUCCESS.getCode() == responseHeader.getCode()) {
                 return responseCommand.getPayload();

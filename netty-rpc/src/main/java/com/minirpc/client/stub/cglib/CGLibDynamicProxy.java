@@ -33,8 +33,10 @@ public class CGLibDynamicProxy extends AbstractStub implements MethodInterceptor
         // 返回结果是字符数组，需要进行反序列化
         return SerializeSupport.parse(
             // 远程调用 Provider
-            // todo 这里默认只有一个参数的情况
-            invokeRpcRemote(new RpcRequest(clz.getCanonicalName(), method.getName(), SerializeSupport.serialize(objects[0])))
+            // todo 这里默认只有一个参数的情况，并且参数类型是 String，返回值类型也是 String 的情况
+            invokeRpcRemote(
+                new RpcRequest(clz.getCanonicalName(), method.getName(), SerializeSupport.serialize(objects[0]))
+            )
         );
     }
 
