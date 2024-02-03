@@ -1,9 +1,7 @@
 # scy-mini-rpc
 
-参考：</br>
-https://time.geekbang.org/column/article/144348
-https://github.com/liyue2008/simple-rpc-framework
-https://github.com/GuangZhui1066/scy-mini-rpc
+提供两种注册中心的实现：本地文件和 MySQL(支持分布式)。 </br>
+支持 Provider 异步处理请求， Consumer 并发调用。 </br>
 
 工程有五个 module </br>
 ● rpc-api：RPC 框架对外提供的服务接口    </br>
